@@ -1,6 +1,17 @@
 var indy = require('indy-sdk')
 
-let name = "Smik";
+function nameGen() {
+    var name = "";
+    var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  
+    for (let i = 0; i < 10; i++){
+        name += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    
+    return name;
+}
+
+let name = nameGen();
 let currentHandle = 0;
 
 let createWallet = function(){
