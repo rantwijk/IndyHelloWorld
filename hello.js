@@ -1,6 +1,6 @@
 var indy = require('indy-sdk')
 
-let name = "Henkie";
+let name = "Smik";
 let currentHandle = 0;
 
 let createWallet = function(){
@@ -17,6 +17,10 @@ let closeWallet = function(){
 
 let exportWallet = function(){
     return indy.exportWallet(currentHandle, {"path":"/home/charlie/Desktop/wallets/" + name + ".wallet", "key":"password"});
+}
+
+let createDID = function(){
+    return indy.createAndStoreMyDid(currentHandle, "{}");
 }
 
 // create wallet
@@ -46,15 +50,20 @@ createWallet().then(function(result){
             }else{
                 console.log("ERROR: " + result);
             }
+            // create did
+            createDID().then(function(result){
+                console.log("Generating DID for "+ name + "...");
+                console.log(result);
 
-            // close wallet after export
-            closeWallet().then(function(result){
+                // close wallet after export
+                closeWallet().then(function(result){
                 console.log("Closing " + name + "'s wallet");
                 if(result==null){
                     console.log("Success!");
                 }else{
                     console.log("ERROR: " + result);
                 }
+            });
             });
         });
     });
