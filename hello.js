@@ -7,12 +7,13 @@ function nameGen() {
     for (let i = 0; i < 10; i++){
         name += letters.charAt(Math.floor(Math.random() * letters.length));
     }
-    
+
     return name;
 }
 
 let name = nameGen();
 let currentHandle = 0;
+let currentDID = "";
 
 let createWallet = function(){
     return indy.createWallet({"id":name}, {"key":"password"});
@@ -32,6 +33,14 @@ let exportWallet = function(){
 
 let createDID = function(){
     return indy.createAndStoreMyDid(currentHandle, "{}");
+}
+
+let setMetadata = function(){
+    return indy.setDidMetadata(currentHandle, currentDID, "{\"Time\":" + Date.now() +"}");
+}
+
+let getDIDData = function(){
+    return indy.listMyDidsWithMeta(currentHandle);
 }
 
 // create wallet
@@ -64,17 +73,17 @@ createWallet().then(function(result){
             // create did
             createDID().then(function(result){
                 console.log("Generating DID for "+ name + "...");
+                currentDID = result[0];
                 console.log(result);
 
-                // close wallet after export
-                closeWallet().then(function(result){
-                console.log("Closing " + name + "'s wallet");
-                if(result==null){
-                    console.log("Success!");
-                }else{
-                    console.log("ERROR: " + result);
-                }
-            });
+                // set some metadata
+                setMetadata().then(function(result){
+                    // get DID data
+                    getDIDData().then(function(result){
+                        console.log("Getting DID data...");
+                        console.log(result);
+                    });
+                });
             });
         });
     });
